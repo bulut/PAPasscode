@@ -9,15 +9,16 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PAPasscodeViewController.h"
 
-#define NAVBAR_HEIGHT   44
-#define PROMPT_HEIGHT   74
+#define NAVBAR_HEIGHT   0
+#define PROMPT_HEIGHT   170
+#define PP_PROMPT_HEIGHT 290
 #define DIGIT_SPACING   10
 #define DIGIT_WIDTH     61
 #define DIGIT_HEIGHT    53
 #define MARKER_WIDTH    16
-#define MARKER_HEIGHT   16
-#define MARKER_X        22
-#define MARKER_Y        18
+#define MARKER_HEIGHT   46
+#define MARKER_X        14
+#define MARKER_Y        15
 #define MESSAGE_HEIGHT  74
 #define FAILED_LCAP     19
 #define FAILED_RCAP     19
@@ -44,21 +45,26 @@
         _action = action;
         switch (action) {
             case PasscodeActionSet:
-                self.title = NSLocalizedString(@"Set Passcode", nil);
-                _enterPrompt = NSLocalizedString(@"Enter a passcode", nil);
-                _confirmPrompt = NSLocalizedString(@"Re-enter your passcode", nil);
+                self.title = NSLocalizedString(@"Set your PIN", nil);
+                _enterPrompt = NSLocalizedString(@"Enter your PIN", nil);
+                _confirmPrompt = NSLocalizedString(@"Re-enter your PIN", nil);
                 break;
-                
+            
+            case PassCodeActionReceive:
+                self.title = NSLocalizedString(@"Enter your PIN", nil);
+                _enterPrompt = NSLocalizedString(@"Enter your PIN", nil);
+                break;
+            
             case PasscodeActionEnter:
-                self.title = NSLocalizedString(@"Enter Passcode", nil);
-                _enterPrompt = NSLocalizedString(@"Enter your passcode", nil);
+                self.title = NSLocalizedString(@"Enter your PIN", nil);
+                _enterPrompt = NSLocalizedString(@"Enter your PIN", nil);
                 break;
                 
             case PasscodeActionChange:
-                self.title = NSLocalizedString(@"Change Passcode", nil);
-                _changePrompt = NSLocalizedString(@"Enter your old passcode", nil);
-                _enterPrompt = NSLocalizedString(@"Enter your new passcode", nil);
-                _confirmPrompt = NSLocalizedString(@"Re-enter your new passcode", nil);
+                self.title = NSLocalizedString(@"Change your PIN", nil);
+                _changePrompt = NSLocalizedString(@"Enter your old PIN", nil);
+                _enterPrompt = NSLocalizedString(@"Enter your new PIN", nil);
+                _confirmPrompt = NSLocalizedString(@"Re-enter your new PIN", nil);
                 break;
         }
         self.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -81,6 +87,7 @@
     if (_backgroundView) {
         [contentView addSubview:_backgroundView];
     }
+    
     contentView.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
     [view addSubview:contentView];
     
@@ -92,8 +99,8 @@
         [contentView addSubview:digitPanel];
         
         UIImage *backgroundImage = [UIImage imageNamed:@"papasscode_background.png"];
-        UIImage *markerImage = [UIImage imageNamed:@"papasscode_marker"];
-        CGFloat xLeft = 0;
+        UIImage *markerImage = [UIImage imageNamed:@"papasscode_marker.png"];
+        CGFloat xLeft = 40;
         for (int i=0;i<4;i++) {
             UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
             backgroundImageView.frame = CGRectOffset(backgroundImageView.frame, xLeft, 0);
@@ -131,12 +138,12 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showKeyboard:) name:UIKeyboardDidHideNotification object:nil];
     [contentView addSubview:passcodeTextField];
 
-    promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PROMPT_HEIGHT)];
+    promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PP_PROMPT_HEIGHT)];
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     promptLabel.backgroundColor = [UIColor clearColor];
-    promptLabel.textColor = [UIColor colorWithRed:0.30 green:0.34 blue:0.42 alpha:1.0];
-    promptLabel.font = [UIFont boldSystemFontOfSize:17];
-    promptLabel.shadowColor = [UIColor whiteColor];
+    promptLabel.textColor = [UIColor whiteColor];
+    promptLabel.shadowColor = [UIColor colorWithRed:254.0/255.0 green:191.0/255.0 blue:76.0/255.0 alpha:1.0];
+    promptLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];
     promptLabel.shadowOffset = CGSizeMake(0, 1);
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
     promptLabel.textAlignment = UITextAlignmentCenter;
@@ -239,6 +246,12 @@
                     [self showScreenForPhase:0 animated:YES];
                     messageLabel.text = NSLocalizedString(@"Passcodes did not match. Try again.", nil);
                 }
+            }
+            break;
+            
+        case PassCodeActionReceive:
+            if ([_delegate respondsToSelector:@selector(PAPasscodeViewController:didReceivePasscode:)]) {
+                [_delegate PAPasscodeViewController:self didReceivePasscode:text];
             }
             break;
             
@@ -374,6 +387,10 @@
             break;
             
         case PasscodeActionEnter:
+            promptLabel.text = _enterPrompt;
+            break;
+            
+        case PassCodeActionReceive:
             promptLabel.text = _enterPrompt;
             break;
             
