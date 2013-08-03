@@ -10,15 +10,15 @@
 #import "PAPasscodeViewController.h"
 
 #define NAVBAR_HEIGHT   0
-#define PROMPT_HEIGHT   170
-#define PP_PROMPT_HEIGHT 290
-#define DIGIT_SPACING   10
-#define DIGIT_WIDTH     61
-#define DIGIT_HEIGHT    53
+#define PROMPT_HEIGHT   190
+#define PP_PROMPT_HEIGHT 340
+#define DIGIT_SPACING   4
+#define DIGIT_WIDTH     49
+#define DIGIT_HEIGHT    51
 #define MARKER_WIDTH    16
-#define MARKER_HEIGHT   46
-#define MARKER_X        14
-#define MARKER_Y        15
+#define MARKER_HEIGHT   16
+#define MARKER_X        17
+#define MARKER_Y        17
 #define MESSAGE_HEIGHT  74
 #define FAILED_LCAP     19
 #define FAILED_RCAP     19
@@ -100,7 +100,7 @@
         
         UIImage *backgroundImage = [UIImage imageNamed:@"papasscode_background.png"];
         UIImage *markerImage = [UIImage imageNamed:@"papasscode_marker.png"];
-        CGFloat xLeft = 40;
+        CGFloat xLeft = 0;
         for (int i=0;i<4;i++) {
             UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
             backgroundImageView.frame = CGRectOffset(backgroundImageView.frame, xLeft, 0);
@@ -142,9 +142,10 @@
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     promptLabel.backgroundColor = [UIColor clearColor];
     promptLabel.textColor = [UIColor whiteColor];
-    promptLabel.shadowColor = [UIColor colorWithRed:254.0/255.0 green:191.0/255.0 blue:76.0/255.0 alpha:1.0];
-    promptLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:20];
-    promptLabel.shadowOffset = CGSizeMake(0, 1);
+    promptLabel.shadowColor = [UIColor colorWithRed:254.0/255.0 green:181.0/255.0 blue:35.0/255.0 alpha:1.0];
+    promptLabel.shadowOffset = CGSizeMake(0.0, 1.5);
+    promptLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:23];
+    promptLabel.shadowOffset = CGSizeMake(0, -1);
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
     promptLabel.textAlignment = UITextAlignmentCenter;
 #else
