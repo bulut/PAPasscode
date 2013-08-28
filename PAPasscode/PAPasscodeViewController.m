@@ -10,8 +10,8 @@
 #import "PAPasscodeViewController.h"
 
 #define NAVBAR_HEIGHT   0
-#define PROMPT_HEIGHT   190
-#define PP_PROMPT_HEIGHT 340
+#define PROMPT_HEIGHT   150
+#define PP_PROMPT_HEIGHT 270
 #define DIGIT_SPACING   4
 #define DIGIT_WIDTH     49
 #define DIGIT_HEIGHT    51
@@ -19,7 +19,7 @@
 #define MARKER_HEIGHT   16
 #define MARKER_X        17
 #define MARKER_Y        17
-#define MESSAGE_HEIGHT  74
+#define MESSAGE_HEIGHT  54
 #define FAILED_LCAP     19
 #define FAILED_RCAP     19
 #define FAILED_HEIGHT   26
