@@ -28,6 +28,7 @@ typedef enum {
 - (void)PAPasscodeViewControllerDidSetPasscode:(PAPasscodeViewController *)controller;
 - (void)PAPasscodeViewController:(PAPasscodeViewController *)controller didFailToEnterPasscode:(NSInteger)attempts;
 - (void)PAPasscodeViewController:(PAPasscodeViewController *)controller didReceivePasscode:(NSString *)passcode;
+- (void)PAPasscodeViewController:(PAPasscodeViewController *)controller didSetPasscode:(NSString *)passcode;
 
 @end
 

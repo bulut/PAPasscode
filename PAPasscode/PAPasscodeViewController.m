@@ -45,16 +45,16 @@
         _action = action;
         switch (action) {
             case PasscodeActionSet:
-                self.title = NSLocalizedString(@"Set your PIN", nil);
-                _enterPrompt = NSLocalizedString(@"Enter your PIN", nil);
+                self.title = NSLocalizedString(@"Create a PIN", nil);
+                _enterPrompt = NSLocalizedString(@"Create a PIN", nil);
                 _confirmPrompt = NSLocalizedString(@"Re-enter your PIN", nil);
                 break;
-            
+                
             case PassCodeActionReceive:
                 self.title = NSLocalizedString(@"Enter your PIN", nil);
                 _enterPrompt = NSLocalizedString(@"Enter your PIN", nil);
                 break;
-            
+                
             case PasscodeActionEnter:
                 self.title = NSLocalizedString(@"Enter your PIN", nil);
                 _enterPrompt = NSLocalizedString(@"Enter your PIN", nil);
@@ -76,7 +76,7 @@
 - (void)loadView {
     UIView *view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].applicationFrame];
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-
+    
     UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, view.bounds.size.width, NAVBAR_HEIGHT)];
     navigationBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     navigationBar.items = @[self.navigationItem];
@@ -137,7 +137,7 @@
     [passcodeTextField addTarget:self action:@selector(passcodeChanged:) forControlEvents:UIControlEventEditingChanged];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showKeyboard:) name:UIKeyboardDidHideNotification object:nil];
     [contentView addSubview:passcodeTextField];
-
+    
     promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PP_PROMPT_HEIGHT)];
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     promptLabel.backgroundColor = [UIColor clearColor];
@@ -169,7 +169,7 @@
     messageLabel.numberOfLines = 0;
 	messageLabel.text = _message;
     [contentView addSubview:messageLabel];
-        
+    
     UIImage *failedBg = [[UIImage imageNamed:@"papasscode_failed_bg"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, FAILED_LCAP, 0, FAILED_RCAP)];
     failedImageView = [[UIImageView alloc] initWithImage:failedBg];
     failedImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
@@ -240,12 +240,12 @@
                 [self showScreenForPhase:1 animated:YES];
             } else {
                 if ([text isEqualToString:_passcode]) {
-                    if ([_delegate respondsToSelector:@selector(PAPasscodeViewControllerDidSetPasscode:)]) {
-                        [_delegate PAPasscodeViewControllerDidSetPasscode:self];
+                    if ([_delegate respondsToSelector:@selector(PAPasscodeViewController:didSetPasscode:)]) {
+                        [_delegate PAPasscodeViewController:self didSetPasscode:text];
                     }
                 } else {
                     [self showScreenForPhase:0 animated:YES];
-                    messageLabel.text = NSLocalizedString(@"Passcodes did not match. Try again.", nil);
+                    messageLabel.text = NSLocalizedString(@"PIN did not match. Try again.", nil);
                 }
             }
             break;
@@ -295,7 +295,7 @@
                     }
                 } else {
                     [self showScreenForPhase:1 animated:YES];
-                    messageLabel.text = NSLocalizedString(@"Passcodes did not match. Try again.", nil);
+                    messageLabel.text = NSLocalizedString(@"PIN did not match. Try again.", nil);
                 }
             }
             break;
