@@ -157,10 +157,9 @@
     messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, PROMPT_HEIGHT+DIGIT_HEIGHT, contentView.bounds.size.width, MESSAGE_HEIGHT)];
     messageLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     messageLabel.backgroundColor = [UIColor clearColor];
-    messageLabel.textColor = [UIColor colorWithRed:0.30 green:0.34 blue:0.42 alpha:1.0];
-    messageLabel.font = [UIFont systemFontOfSize:14];
-    messageLabel.shadowColor = [UIColor whiteColor];
-    messageLabel.shadowOffset = CGSizeMake(0, 1);
+    messageLabel.textColor = [UIColor colorWithRed:101.0/255.0 green:101.0/255.0 blue:101.0/255.0 alpha:1.0];
+    messageLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
+
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
     messageLabel.textAlignment = UITextAlignmentCenter;
 #else
