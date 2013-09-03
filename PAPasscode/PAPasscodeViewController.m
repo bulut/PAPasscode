@@ -157,8 +157,10 @@
     messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, PROMPT_HEIGHT+DIGIT_HEIGHT, contentView.bounds.size.width, MESSAGE_HEIGHT)];
     messageLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     messageLabel.backgroundColor = [UIColor clearColor];
-    messageLabel.textColor = [UIColor colorWithRed:101.0/255.0 green:101.0/255.0 blue:101.0/255.0 alpha:1.0];
-    messageLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:16];
+    messageLabel.textColor = [UIColor colorWithRed:0.30 green:0.34 blue:0.42 alpha:1.0];
+    messageLabel.font = [UIFont systemFontOfSize:14];
+    messageLabel.shadowColor = [UIColor whiteColor];
+    messageLabel.shadowOffset = CGSizeMake(0, 1);
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
     messageLabel.textAlignment = UITextAlignmentCenter;
@@ -179,7 +181,7 @@
     failedAttemptsLabel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
     failedAttemptsLabel.backgroundColor = [UIColor clearColor];
     failedAttemptsLabel.textColor = [UIColor whiteColor];
-    failedAttemptsLabel.font = [UIFont boldSystemFontOfSize:15];
+    failedAttemptsLabel.font = [UIFont boldSystemFontOfSize:12];
     failedAttemptsLabel.shadowColor = [UIColor blackColor];
     failedAttemptsLabel.shadowOffset = CGSizeMake(0, -1);
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
@@ -244,7 +246,7 @@
                     }
                 } else {
                     [self showScreenForPhase:0 animated:YES];
-                    messageLabel.text = NSLocalizedString(@"PIN did not match. Try again.", nil);
+                    [self showFailedPINSetup];
                 }
             }
             break;
@@ -325,6 +327,21 @@
     } else {
         failedAttemptsLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%d Failed Passcode Attempts", nil), _failedAttempts];
     }
+    [failedAttemptsLabel sizeToFit];
+    CGFloat bgWidth = failedAttemptsLabel.bounds.size.width + FAILED_MARGIN*2;
+    CGFloat x = floor((contentView.bounds.size.width-bgWidth)/2);
+    CGFloat y = PROMPT_HEIGHT+DIGIT_HEIGHT+floor((MESSAGE_HEIGHT-FAILED_HEIGHT)/2);
+    failedImageView.frame = CGRectMake(x, y, bgWidth, FAILED_HEIGHT);
+    x = failedImageView.frame.origin.x+FAILED_MARGIN;
+    y = failedImageView.frame.origin.y+floor((failedImageView.bounds.size.height-failedAttemptsLabel.frame.size.height)/2);
+    failedAttemptsLabel.frame = CGRectMake(x, y, failedAttemptsLabel.bounds.size.width, failedAttemptsLabel.bounds.size.height);
+}
+
+- (void)showFailedPINSetup {
+    messageLabel.hidden = YES;
+    failedImageView.hidden = NO;
+    failedAttemptsLabel.hidden = NO;
+    failedAttemptsLabel.text = NSLocalizedString(@"The PIN numbers didn't match. Try again!", nil);
     [failedAttemptsLabel sizeToFit];
     CGFloat bgWidth = failedAttemptsLabel.bounds.size.width + FAILED_MARGIN*2;
     CGFloat x = floor((contentView.bounds.size.width-bgWidth)/2);
