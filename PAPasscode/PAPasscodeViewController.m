@@ -9,9 +9,15 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PAPasscodeViewController.h"
 
+#define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+#define IS_IPHONE_5 (IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 568.0f)
+#define IS_RETINA ([[UIScreen mainScreen] scale] == 2.0f)
+
 #define NAVBAR_HEIGHT   0
-#define PROMPT_HEIGHT   150
-#define PP_PROMPT_HEIGHT 270
+#define PROMPT_HEIGHT   200
+#define NONRETINA_PROMPT_HEIGHT   152
+#define PP_PROMPT_HEIGHT 356
+#define NONRETINA_PP_PROMPT_HEIGHT   274
 #define DIGIT_SPACING   4
 #define DIGIT_WIDTH     49
 #define DIGIT_HEIGHT    51
@@ -28,6 +34,8 @@
 #define SLIDE_DURATION  0.3
 
 @interface PAPasscodeViewController ()
+@property  BOOL failedPINSetup;
+
 - (void)cancel:(id)sender;
 - (void)handleFailedAttempt;
 - (void)handleCompleteField;
@@ -94,7 +102,11 @@
     CGFloat panelWidth = DIGIT_WIDTH*4+DIGIT_SPACING*3;
     if (_simple) {
         UIView *digitPanel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, panelWidth, DIGIT_HEIGHT)];
-        digitPanel.frame = CGRectOffset(digitPanel.frame, (contentView.bounds.size.width-digitPanel.bounds.size.width)/2, PROMPT_HEIGHT);
+        if (IS_IPHONE_5) {
+            digitPanel.frame = CGRectOffset(digitPanel.frame, (contentView.bounds.size.width-digitPanel.bounds.size.width)/2, PROMPT_HEIGHT);
+        } else {
+            digitPanel.frame = CGRectOffset(digitPanel.frame, (contentView.bounds.size.width-digitPanel.bounds.size.width)/2, NONRETINA_PROMPT_HEIGHT);
+        }
         digitPanel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         [contentView addSubview:digitPanel];
         
@@ -116,7 +128,12 @@
     } else {
         UIView *passcodePanel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, panelWidth, DIGIT_HEIGHT)];
         passcodePanel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-        passcodePanel.frame = CGRectOffset(passcodePanel.frame, (contentView.bounds.size.width-passcodePanel.bounds.size.width)/2, PROMPT_HEIGHT);
+        if (IS_IPHONE_5) {
+            passcodePanel.frame = CGRectOffset(passcodePanel.frame, (contentView.bounds.size.width-passcodePanel.bounds.size.width)/2, PROMPT_HEIGHT);
+        } else {
+            passcodePanel.frame = CGRectOffset(passcodePanel.frame, (contentView.bounds.size.width-passcodePanel.bounds.size.width)/2, NONRETINA_PROMPT_HEIGHT);
+        }
+
         passcodePanel.frame = CGRectInset(passcodePanel.frame, TEXTFIELD_MARGIN, TEXTFIELD_MARGIN);
         passcodePanel.layer.borderColor = [UIColor colorWithRed:0.65 green:0.67 blue:0.70 alpha:1.0].CGColor;
         passcodePanel.layer.borderWidth = 1.0;
@@ -137,8 +154,12 @@
     [passcodeTextField addTarget:self action:@selector(passcodeChanged:) forControlEvents:UIControlEventEditingChanged];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showKeyboard:) name:UIKeyboardDidHideNotification object:nil];
     [contentView addSubview:passcodeTextField];
-    
-    promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PP_PROMPT_HEIGHT)];
+
+    if (IS_IPHONE_5) {
+        promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PP_PROMPT_HEIGHT)];
+    } else {
+        promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, NONRETINA_PP_PROMPT_HEIGHT)];
+    }
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     promptLabel.backgroundColor = [UIColor clearColor];
     promptLabel.textColor = [UIColor whiteColor];
@@ -153,8 +174,12 @@
 #endif
     promptLabel.numberOfLines = 0;
     [contentView addSubview:promptLabel];
-    
-    messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, PROMPT_HEIGHT+DIGIT_HEIGHT, contentView.bounds.size.width, MESSAGE_HEIGHT)];
+
+    if (IS_IPHONE_5){
+        messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, PROMPT_HEIGHT+DIGIT_HEIGHT, contentView.bounds.size.width, MESSAGE_HEIGHT)];
+    } else {
+        messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, NONRETINA_PROMPT_HEIGHT+DIGIT_HEIGHT, contentView.bounds.size.width, MESSAGE_HEIGHT)];
+    }
     messageLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     messageLabel.backgroundColor = [UIColor clearColor];
     messageLabel.textColor = [UIColor colorWithRed:0.30 green:0.34 blue:0.42 alpha:1.0];
@@ -233,20 +258,23 @@
 
 - (void)handleCompleteField {
     NSString *text = passcodeTextField.text;
+   
     switch (_action) {
         case PasscodeActionSet:
             if (phase == 0) {
                 _passcode = text;
                 messageLabel.text = @"";
+                self.failedPINSetup = false;
                 [self showScreenForPhase:1 animated:YES];
             } else {
                 if ([text isEqualToString:_passcode]) {
+                    self.failedPINSetup = false;
                     if ([_delegate respondsToSelector:@selector(PAPasscodeViewController:didSetPasscode:)]) {
                         [_delegate PAPasscodeViewController:self didSetPasscode:text];
                     }
                 } else {
+                    self.failedPINSetup = true;
                     [self showScreenForPhase:0 animated:YES];
-                    [self showFailedPINSetup];
                 }
             }
             break;
@@ -330,7 +358,13 @@
     [failedAttemptsLabel sizeToFit];
     CGFloat bgWidth = failedAttemptsLabel.bounds.size.width + FAILED_MARGIN*2;
     CGFloat x = floor((contentView.bounds.size.width-bgWidth)/2);
-    CGFloat y = PROMPT_HEIGHT+DIGIT_HEIGHT+floor((MESSAGE_HEIGHT-FAILED_HEIGHT)/2);
+    CGFloat y;
+    
+    if (IS_IPHONE_5){
+         y = PROMPT_HEIGHT+DIGIT_HEIGHT+floor((MESSAGE_HEIGHT-FAILED_HEIGHT)/2);
+     } else {
+         y = NONRETINA_PROMPT_HEIGHT+DIGIT_HEIGHT+floor((MESSAGE_HEIGHT-FAILED_HEIGHT)/2);
+     }
     failedImageView.frame = CGRectMake(x, y, bgWidth, FAILED_HEIGHT);
     x = failedImageView.frame.origin.x+FAILED_MARGIN;
     y = failedImageView.frame.origin.y+floor((failedImageView.bounds.size.height-failedAttemptsLabel.frame.size.height)/2);
@@ -345,7 +379,12 @@
     [failedAttemptsLabel sizeToFit];
     CGFloat bgWidth = failedAttemptsLabel.bounds.size.width + FAILED_MARGIN*2;
     CGFloat x = floor((contentView.bounds.size.width-bgWidth)/2);
-    CGFloat y = PROMPT_HEIGHT+DIGIT_HEIGHT+floor((MESSAGE_HEIGHT-FAILED_HEIGHT)/2);
+    CGFloat y;
+    if (IS_IPHONE_5){
+         y = PROMPT_HEIGHT+DIGIT_HEIGHT+floor((MESSAGE_HEIGHT-FAILED_HEIGHT)/2);
+    } else {
+         y = NONRETINA_PROMPT_HEIGHT+DIGIT_HEIGHT+floor((MESSAGE_HEIGHT-FAILED_HEIGHT)/2);
+    }
     failedImageView.frame = CGRectMake(x, y, bgWidth, FAILED_HEIGHT);
     x = failedImageView.frame.origin.x+FAILED_MARGIN;
     y = failedImageView.frame.origin.y+floor((failedImageView.bounds.size.height-failedAttemptsLabel.frame.size.height)/2);
@@ -370,6 +409,14 @@
 }
 
 - (void)showScreenForPhase:(NSInteger)newPhase animated:(BOOL)animated {
+    if (self.failedPINSetup){
+        [self showFailedPINSetup];
+    } else {
+        messageLabel.hidden = NO;
+        failedImageView.hidden = YES;
+        failedAttemptsLabel.hidden = YES;
+    }
+    
     CGFloat dir = (newPhase > phase) ? 1 : -1;
     if (animated) {
         UIGraphicsBeginImageContext(self.view.bounds.size);
