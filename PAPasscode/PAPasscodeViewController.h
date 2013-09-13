@@ -42,6 +42,7 @@ typedef enum {
     UITextField *passcodeTextField;
     UIImageView *digitImageViews[4];
     UIImageView *snapshotImageView;
+    UILabel *clarificationMessageLabel;
 }
 
 @property (strong) UIView *backgroundView;
@@ -55,6 +56,8 @@ typedef enum {
 @property (strong) NSString *confirmPrompt;
 @property (strong) NSString *changePrompt;
 @property (strong) NSString *message;
+@property (strong) NSString *moreConfirmPrompt;
+@property (strong) NSString *moreEnterPrompt;
 
 - (id)initForAction:(PasscodeAction)action;
 

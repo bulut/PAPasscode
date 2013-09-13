@@ -154,12 +154,20 @@
     [passcodeTextField addTarget:self action:@selector(passcodeChanged:) forControlEvents:UIControlEventEditingChanged];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showKeyboard:) name:UIKeyboardDidHideNotification object:nil];
     [contentView addSubview:passcodeTextField];
-
+    
     if (IS_IPHONE_5) {
         promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PP_PROMPT_HEIGHT)];
+        clarificationMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 258, 320, 22)];
+        
     } else {
         promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, NONRETINA_PP_PROMPT_HEIGHT)];
+        clarificationMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 206, 320, 22)];
     }
+
+    clarificationMessageLabel.backgroundColor = [UIColor clearColor];
+    clarificationMessageLabel.textColor = [UIColor whiteColor];
+    clarificationMessageLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15.0];
+    
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     promptLabel.backgroundColor = [UIColor clearColor];
     promptLabel.textColor = [UIColor whiteColor];
@@ -171,9 +179,11 @@
     promptLabel.textAlignment = UITextAlignmentCenter;
 #else
     promptLabel.textAlignment = NSTextAlignmentCenter;
+    clarificationMessageLabel.textAlignment = NSTextAlignmentCenter;
 #endif
     promptLabel.numberOfLines = 0;
     [contentView addSubview:promptLabel];
+    [contentView addSubview:clarificationMessageLabel];
 
     if (IS_IPHONE_5){
         messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, PROMPT_HEIGHT+DIGIT_HEIGHT, contentView.bounds.size.width, MESSAGE_HEIGHT)];
@@ -445,8 +455,10 @@
         case PasscodeActionSet:
             if (phase == 0) {
                 promptLabel.text = _enterPrompt;
+                clarificationMessageLabel.text = self.moreEnterPrompt;
             } else {
                 promptLabel.text = _confirmPrompt;
+                clarificationMessageLabel.text = self.moreConfirmPrompt;
             }
             break;
             
