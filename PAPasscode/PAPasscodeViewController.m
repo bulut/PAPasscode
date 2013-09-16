@@ -25,7 +25,7 @@
 #define MARKER_HEIGHT   16
 #define MARKER_X        17
 #define MARKER_Y        17
-#define MESSAGE_HEIGHT  54
+#define MESSAGE_HEIGHT  45
 #define FAILED_LCAP     19
 #define FAILED_RCAP     19
 #define FAILED_HEIGHT   26
