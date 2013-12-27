@@ -124,7 +124,7 @@
             xLeft += DIGIT_SPACING + backgroundImage.size.width;
         }
         passcodeTextField = [[UITextField alloc] initWithFrame:digitPanel.frame];
-#ifdef DEBUG
+#ifdef MONKEYTALK
         passcodeTextField.hidden = NO;
 #else
         passcodeTextField.hidden = YES;
