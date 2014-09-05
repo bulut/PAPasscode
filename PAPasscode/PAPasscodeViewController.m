@@ -469,15 +469,12 @@
             }
             break;
     }
+    
     for (int i=0;i<4;i++) {
-        if (phase == 0){
-            digitImageViews[i].hidden = YES;
-        } else {
-
-            backgroundImageView[i].hidden = NO;
-            digitImageViews[i].hidden = YES;
-        }
+        backgroundImageView[i].hidden = NO;
+        digitImageViews[i].hidden = YES;
     }
+    
     if (animated) {
         contentView.frame = CGRectOffset(contentView.frame, contentView.frame.size.width*dir, 0);
         [UIView animateWithDuration:SLIDE_DURATION animations:^() {
