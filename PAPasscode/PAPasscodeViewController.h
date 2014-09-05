@@ -40,6 +40,7 @@ typedef enum {
     UIImageView *failedImageView;
     UILabel *failedAttemptsLabel;
     UITextField *passcodeTextField;
+    UIImageView *backgroundImageView[4];
     UIImageView *digitImageViews[4];
     UIImageView *snapshotImageView;
     UILabel *clarificationMessageLabel;

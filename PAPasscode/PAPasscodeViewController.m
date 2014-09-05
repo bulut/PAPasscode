@@ -14,18 +14,18 @@
 #define IS_RETINA ([[UIScreen mainScreen] scale] == 2.0f)
 
 #define NAVBAR_HEIGHT   0
-#define PROMPT_HEIGHT   200
+#define PROMPT_HEIGHT   230
 #define NONRETINA_PROMPT_HEIGHT   152
-#define PP_PROMPT_HEIGHT 356
+#define PP_PROMPT_HEIGHT 580
 #define NONRETINA_PP_PROMPT_HEIGHT   274
-#define DIGIT_SPACING   4
-#define DIGIT_WIDTH     49
-#define DIGIT_HEIGHT    51
+#define DIGIT_SPACING   25
+#define DIGIT_WIDTH     16
+#define DIGIT_HEIGHT    1
 #define MARKER_WIDTH    16
-#define MARKER_HEIGHT   16
-#define MARKER_X        17
-#define MARKER_Y        17
-#define MESSAGE_HEIGHT  45
+#define MARKER_HEIGHT   1
+#define MARKER_X        0
+#define MARKER_Y        -5
+#define MESSAGE_HEIGHT  65
 #define FAILED_LCAP     19
 #define FAILED_RCAP     19
 #define FAILED_HEIGHT   26
@@ -114,12 +114,12 @@
         UIImage *markerImage = [UIImage imageNamed:@"papasscode_marker.png"];
         CGFloat xLeft = 0;
         for (int i=0;i<4;i++) {
-            UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
-            backgroundImageView.frame = CGRectOffset(backgroundImageView.frame, xLeft, 0);
-            [digitPanel addSubview:backgroundImageView];
+            backgroundImageView[i] = [[UIImageView alloc] initWithImage:backgroundImage];
+            backgroundImageView[i].frame = CGRectOffset(backgroundImageView[i].frame, xLeft, 0);
+            [digitPanel addSubview:backgroundImageView[i]];
             digitImageViews[i] = [[UIImageView alloc] initWithImage:markerImage];
             digitImageViews[i].autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
-            digitImageViews[i].frame = CGRectOffset(digitImageViews[i].frame, backgroundImageView.frame.origin.x+MARKER_X, MARKER_Y);
+            digitImageViews[i].frame = CGRectOffset(digitImageViews[i].frame, backgroundImageView[i].frame.origin.x+MARKER_X, MARKER_Y);
             [digitPanel addSubview:digitImageViews[i]];
             xLeft += DIGIT_SPACING + backgroundImage.size.width;
         }
@@ -161,7 +161,7 @@
     
     if (IS_IPHONE_5) {
         promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PP_PROMPT_HEIGHT)];
-        clarificationMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 258, 320, 22)];
+        clarificationMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 298, 320, 22)];
         
     } else {
         promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, NONRETINA_PP_PROMPT_HEIGHT)];
@@ -169,22 +169,12 @@
     }
 
     clarificationMessageLabel.backgroundColor = [UIColor clearColor];
-    clarificationMessageLabel.textColor = [UIColor whiteColor];
-    clarificationMessageLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15.0];
-    
+    clarificationMessageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:16.0];
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    promptLabel.backgroundColor = [UIColor clearColor];
-    promptLabel.textColor = [UIColor whiteColor];
-    promptLabel.shadowColor = [UIColor colorWithRed:254.0/255.0 green:181.0/255.0 blue:35.0/255.0 alpha:1.0];
-    promptLabel.shadowOffset = CGSizeMake(0.0, 1.5);
-    promptLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:23];
-    promptLabel.shadowOffset = CGSizeMake(0, -1);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
-    promptLabel.textAlignment = UITextAlignmentCenter;
-#else
+    promptLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:23];
+
     promptLabel.textAlignment = NSTextAlignmentCenter;
     clarificationMessageLabel.textAlignment = NSTextAlignmentCenter;
-#endif
     promptLabel.numberOfLines = 0;
     [contentView addSubview:promptLabel];
     [contentView addSubview:clarificationMessageLabel];
@@ -200,12 +190,8 @@
     messageLabel.font = [UIFont systemFontOfSize:14];
     messageLabel.shadowColor = [UIColor whiteColor];
     messageLabel.shadowOffset = CGSizeMake(0, 1);
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
-    messageLabel.textAlignment = UITextAlignmentCenter;
-#else
     messageLabel.textAlignment = NSTextAlignmentCenter;
-#endif
+
     messageLabel.numberOfLines = 0;
 	messageLabel.text = _message;
     [contentView addSubview:messageLabel];
@@ -223,11 +209,7 @@
     failedAttemptsLabel.font = [UIFont boldSystemFontOfSize:12];
     failedAttemptsLabel.shadowColor = [UIColor blackColor];
     failedAttemptsLabel.shadowOffset = CGSizeMake(0, -1);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
-    failedAttemptsLabel.textAlignment = UITextAlignmentCenter;
-#else
     failedAttemptsLabel.textAlignment = NSTextAlignmentCenter;
-#endif
     failedAttemptsLabel.hidden = YES;
     [contentView addSubview:failedAttemptsLabel];
     
@@ -407,12 +389,15 @@
 
 - (void)passcodeChanged:(id)sender {
     NSString *text = passcodeTextField.text;
+    
     if (_simple) {
         if ([text length] > 4) {
             text = [text substringToIndex:4];
         }
         for (int i=0;i<4;i++) {
+            
             digitImageViews[i].hidden = i >= [text length];
+            backgroundImageView[i].hidden = i < [text length];
         }
         if ([text length] == 4) {
             [self handleCompleteField];
@@ -485,7 +470,13 @@
             break;
     }
     for (int i=0;i<4;i++) {
-        digitImageViews[i].hidden = YES;
+        if (phase == 0){
+            digitImageViews[i].hidden = YES;
+        } else {
+
+            backgroundImageView[i].hidden = NO;
+            digitImageViews[i].hidden = YES;
+        }
     }
     if (animated) {
         contentView.frame = CGRectOffset(contentView.frame, contentView.frame.size.width*dir, 0);
