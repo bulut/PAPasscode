@@ -9,6 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PAPasscodeViewController.h"
 
+
 #define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 #define IS_IPHONE_5 (IS_IPHONE && [[UIScreen mainScreen] bounds].size.height == 568.0f)
 #define IS_RETINA ([[UIScreen mainScreen] scale] == 2.0f)
@@ -16,7 +17,7 @@
 #define NAVBAR_HEIGHT   0
 #define PROMPT_HEIGHT   230
 #define NONRETINA_PROMPT_HEIGHT   152
-#define PP_PROMPT_HEIGHT 580
+#define PP_PROMPT_HEIGHT 300
 #define NONRETINA_PP_PROMPT_HEIGHT   274
 #define DIGIT_SPACING   25
 #define DIGIT_WIDTH     16
@@ -161,7 +162,7 @@
     
     if (IS_IPHONE_5) {
         promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, PP_PROMPT_HEIGHT)];
-        clarificationMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 298, 320, 22)];
+        clarificationMessageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 165, 320, 22)];
         
     } else {
         promptLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, contentView.bounds.size.width, NONRETINA_PP_PROMPT_HEIGHT)];
@@ -169,9 +170,11 @@
     }
 
     clarificationMessageLabel.backgroundColor = [UIColor clearColor];
-    clarificationMessageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:16.0];
+    clarificationMessageLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15.0];
+    clarificationMessageLabel.textColor = [UIColor colorWithRed:54.0/255.0 green:158.0/255.0 blue:189.0/255.0 alpha:1.0];
     promptLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    promptLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:23];
+    promptLabel.textColor = [UIColor colorWithRed:54.0/255.0 green:158.0/255.0 blue:189.0/255.0 alpha:1.0];
+    promptLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:30];
 
     promptLabel.textAlignment = NSTextAlignmentCenter;
     clarificationMessageLabel.textAlignment = NSTextAlignmentCenter;
