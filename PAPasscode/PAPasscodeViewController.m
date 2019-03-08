@@ -125,11 +125,7 @@
             xLeft += DIGIT_SPACING + backgroundImage.size.width;
         }
         passcodeTextField = [[UITextField alloc] initWithFrame:digitPanel.frame];
-#ifdef MONKEYTALK
-        passcodeTextField.hidden = NO;
-#else
-        passcodeTextField.hidden = YES;
-#endif
+        
     } else {
         UIView *passcodePanel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, panelWidth, DIGIT_HEIGHT)];
         passcodePanel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
