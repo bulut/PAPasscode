@@ -83,7 +83,7 @@
 }
 
 - (void)loadView {
-    UIView *view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].applicationFrame];
+    UIView *view = [[UIView alloc] init];
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
     UINavigationBar *navigationBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, view.bounds.size.width, NAVBAR_HEIGHT)];
@@ -91,7 +91,7 @@
     navigationBar.items = @[self.navigationItem];
     [view addSubview:navigationBar];
     
-    contentView = [[UIView alloc] initWithFrame:CGRectMake(0, NAVBAR_HEIGHT, view.bounds.size.width, view.bounds.size.height-NAVBAR_HEIGHT)];
+    contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, view.bounds.size.width, view.bounds.size.height)];
     contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     if (_backgroundView) {
         [contentView addSubview:_backgroundView];
@@ -434,7 +434,7 @@
         if (finalScreen) {
             self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(handleCompleteField)];
         } else {
-            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Next", nil) style:UIBarButtonItemStyleBordered target:self action:@selector(handleCompleteField)];
+            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Next", nil) style:UIBarButtonItemStylePlain target:self action:@selector(handleCompleteField)];
         }
         self.navigationItem.rightBarButtonItem.enabled = NO;
     }
@@ -477,10 +477,10 @@
     if (animated) {
         contentView.frame = CGRectOffset(contentView.frame, contentView.frame.size.width*dir, 0);
         [UIView animateWithDuration:SLIDE_DURATION animations:^() {
-            contentView.frame = CGRectOffset(contentView.frame, -contentView.frame.size.width*dir, 0);
+            self->contentView.frame = CGRectOffset(self->contentView.frame, -self->contentView.frame.size.width*dir, 0);
         } completion:^(BOOL finished) {
-            [snapshotImageView removeFromSuperview];
-            snapshotImageView = nil;
+            [self->snapshotImageView removeFromSuperview];
+            self->snapshotImageView = nil;
         }];
     }
 }
